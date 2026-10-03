@@ -89,3 +89,14 @@ def test_desktop_exec_uses_an_existing_command() -> None:
 def test_desktop_entry_has_no_unregistered_category() -> None:
     """desktop-file-validate rejects unknown categories."""
     assert "Kitchenware" not in desktop_contents()
+
+
+def test_desktop_entry_has_no_path_key() -> None:
+    """A Path= pointing at the source checkout breaks an installed copy."""
+    assert "\nPath=" not in desktop_contents()
+
+
+def test_exec_is_an_absolute_path() -> None:
+    """A relative Exec would only work from one directory."""
+    command = launch_command()
+    assert command[0].startswith("/"), f"{command[0]} ist nicht absolut"

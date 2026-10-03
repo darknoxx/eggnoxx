@@ -48,6 +48,12 @@ def launch_command() -> list[str]:
 
 
 def desktop_contents() -> str:
+    """The desktop entry text.
+
+    Deliberately no ``Path=`` key: it used to point at the source checkout,
+    which is wrong for an installed copy. Exec carries an absolute console
+    script or interpreter path, so the entry works from any directory.
+    """
     exec_line = " ".join(launch_command())
     return f"""[Desktop Entry]
 Type=Application
@@ -62,7 +68,6 @@ Categories=Utility;
 Keywords=Eier;Eieruhr;Timer;Kochen;Boil;Egg;
 StartupNotify=true
 StartupWMClass={APP_ID}
-Path={Path(__file__).resolve().parent.parent}
 """
 
 

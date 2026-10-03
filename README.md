@@ -53,14 +53,24 @@ Installation.
 
 ### macOS
 
+ZIP von GitHub herunterladen, entpacken, im Ordner starten:
+
+1. [Code herunterladen](https://github.com/darknoxx/eggnoxx/archive/refs/heads/main.zip)
+2. Entpacken (Doppelklick im Finder) und den Ordner `eggnoxx-main` öffnen
+3. Im Terminal dort:
+
 ```bash
-git clone https://github.com/darknoxx/eggnoxx.git ~/Vibecoding/EggNoxx
-cd ~/Vibecoding/EggNoxx
+cd ~/Downloads/eggnoxx-main
+
 python3 -m venv .venv
-source .venv/bin/activate
-pip install -e .
-python -m eggnoxx
+.venv/bin/python -m pip install -e .
+
+.venv/bin/python -m eggnoxx
 ```
+
+Die drei Befehle einzeln, ohne die Zeile mit `cd` — so lässt sich der Ablauf
+auch aus dem Terminal heraus abtippen. Das venv muss nicht aktiviert werden;
+`.venv/bin/python` zeigt direkt hinein.
 
 Voraussetzung ist ein Python 3.10 oder neuer — Apple liefert keines mehr mit,
 am einfachsten via Homebrew:
@@ -103,15 +113,14 @@ Wieder entfernen:
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
-python -m eggnoxx
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -m eggnoxx
 ```
 
 Nur unter Linux dazu, um den Starter-Eintrag zu setzen:
 
 ```bash
-python -m eggnoxx.desktop install
+.venv/bin/python -m eggnoxx.desktop install
 ```
 
 `eggnoxx.desktop` kennt auch `status` (nur prüfen) und `uninstall`.
@@ -120,8 +129,11 @@ python -m eggnoxx.desktop install
 
 ## Starten
 
+Nach `install.sh` liegt der Starter-Eintrag im Anwendungsmenü, danach startet
+EggNoxx von dort. Aus dem Terminal heraus:
+
 ```bash
-eggnoxx          # oder: python -m eggnoxx
+.venv/bin/eggnoxx          # oder: .venv/bin/python -m eggnoxx
 ```
 
 ## Klang
@@ -155,14 +167,14 @@ python -m eggnoxx.icon
 ## Entwicklung
 
 ```bash
-pip install -e ".[dev]"
+.venv/bin/python -m pip install -e ".[dev]"
 
-pytest              # 69 Logik-Tests, ohne GUI
-ruff check .
-ruff format .
+.venv/bin/python -m pytest   # 69 Logik-Tests, ohne GUI
+.venv/bin/ruff check .
+.venv/bin/ruff format .
 
-python smoke_test.py           # GUI-Test headless (offscreen) + Screenshots
-python smoke_test.py --visible # Fenster wirklich anzeigen
+.venv/bin/python smoke_test.py           # GUI-Test headless (offscreen) + Screenshots
+.venv/bin/python smoke_test.py --visible # Fenster wirklich anzeigen
 ```
 
 ### Aufbau

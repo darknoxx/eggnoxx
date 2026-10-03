@@ -107,13 +107,33 @@ def main() -> int:
     check("zurueck auf IDLE", window.timer.state.name == "IDLE")
     check("Dauer bleibt erhalten", window.timer.total == 2)
 
-    print("presets + freie eingabe")
+    print("presets + hinweise")
+    window._select_preset(PRESETS[1])
+    check(
+        "mittelpreset heisst halbweich",
+        PRESETS[1].label == "Halbweich" and "7:00" in window.preset_buttons[1].text(),
+    )
+    button_labels = " ".join(b.text() for b in window.preset_buttons)
+    check("kein 'wachtel' mehr im fenster", "WACHTEL" not in button_labels.upper())
+    check(
+        "preset-hinweis nennt den dotter",
+        "Dotter" in window.preset_hint.text(),
+    )
+    check(
+        "preset-hinweis nennt die zaehlkonvention",
+        "kochende" in window.preset_hint.text(),
+    )
     window._select_preset(PRESETS[2])
-    check("Hart geladen", window.timer.total == 540 and window.time_label.text() == "9:00")
-    window.minutes_box.setValue(3)
-    window.seconds_box.setValue(15)
+    check("Hart-Button geladen", window.timer.total == 540)
+    window.minutes_box.setValue(4)
+    window.seconds_box.setValue(5)
     window._apply_free_input()
-    check("freie Zeit 3:15", window.timer.display == "3:15")
+    check("freie zeit 4:05", window.timer.display == "4:05")
+    check(
+        "freie zeit verliert den preset-text",
+        "Dotter" not in window.preset_hint.text(),
+    )
+    check("freie zeit nennt die konvention", "kochende" in window.preset_hint.text())
 
     print("ausrichtung")
     tops = {

@@ -23,22 +23,34 @@ class State(Enum):
 
 @dataclass(frozen=True)
 class Preset:
-    """A named cooking time offered as a one-click button."""
+    """A named cooking time offered as a one-click button.
+
+    ``note`` says what the result should look like, which is what people
+    actually want to know - "weich" alone does not tell you whether the yolk
+    should still be runny.
+    """
 
     key: str
     label: str
     seconds: int
+    note: str
 
     @property
     def display(self) -> str:
         return format_mmss(self.seconds)
 
 
+# All times are counted from lowering the egg into ALREADY BOILING water. From
+# cold water the egg first has to heat up, which costs roughly three extra
+# minutes - enough to turn a soft egg into a rubber one.
 PRESETS: tuple[Preset, ...] = (
-    Preset(key="weich", label="Weich", seconds=6 * 60 + 30),
-    Preset(key="wachtel", label="Wachtel", seconds=7 * 60),
-    Preset(key="hart", label="Hart", seconds=9 * 60),
+    Preset(key="weich", label="Weich", seconds=6 * 60 + 30, note="Dotter fluessig"),
+    Preset(key="halbweich", label="Halbweich", seconds=7 * 60, note="Dotter dickfluessig"),
+    Preset(key="hart", label="Hart", seconds=9 * 60, note="Dotter fest"),
 )
+
+BOILING_WATER_HINT = "Zeiten ab Einlegen ins kochende Wasser"
+COLD_WATER_HINT = "Aus Kaltwasser: etwa +3 Minuten"
 
 PRESETS_BY_KEY = {preset.key: preset for preset in PRESETS}
 

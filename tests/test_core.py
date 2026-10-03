@@ -5,6 +5,8 @@ from __future__ import annotations
 import pytest
 
 from eggnoxx.core import (
+    BOILING_WATER_HINT,
+    COLD_WATER_HINT,
     PRESETS,
     PRESETS_BY_KEY,
     Countdown,
@@ -58,10 +60,35 @@ def test_clamp_duration_keeps_positive() -> None:
 
 # -- presets -----------------------------------------------------------
 def test_presets_are_the_classic_egg_times() -> None:
-    assert [preset.key for preset in PRESETS] == ["weich", "wachtel", "hart"]
+    assert [preset.key for preset in PRESETS] == ["weich", "halbweich", "hart"]
     assert [preset.seconds for preset in PRESETS] == [390, 420, 540]
     assert PRESETS[0].display == "6:30"
     assert PRESETS_BY_KEY["hart"].label == "Hart"
+
+
+def test_no_preset_is_called_wachtel() -> None:
+    """ "Wachtel" means a quail egg; the middle stage is "halbweich"."""
+    assert all("wachtel" not in preset.label.lower() for preset in PRESETS)
+    assert all("wachtel" not in preset.key for preset in PRESETS)
+    assert set(PRESETS_BY_KEY) == {"weich", "halbweich", "hart"}
+
+
+def test_every_preset_describes_the_result() -> None:
+    """A time alone does not say what the yolk should look like."""
+    for preset in PRESETS:
+        assert preset.note
+    assert "fluessig" in PRESETS_BY_KEY["weich"].note
+    assert "fest" in PRESETS_BY_KEY["hart"].note
+
+
+def test_presets_are_ordered_from_soft_to_hard() -> None:
+    times = [preset.seconds for preset in PRESETS]
+    assert times == sorted(times)
+
+
+def test_hints_name_the_counting_convention() -> None:
+    assert "kochende" in BOILING_WATER_HINT
+    assert "Kaltwasser" in COLD_WATER_HINT
 
 
 # -- countdown ---------------------------------------------------------

@@ -23,7 +23,16 @@ from PySide6.QtWidgets import (
 
 from eggnoxx import theme
 from eggnoxx.alarm import Alarmer
-from eggnoxx.core import PRESETS, TICK_INTERVAL_MS, Countdown, State, clamp_duration
+from eggnoxx.core import (
+    BOILING_WATER_HINT,
+    COLD_WATER_HINT,
+    PRESETS,
+    TICK_INTERVAL_MS,
+    Countdown,
+    Preset,
+    State,
+    clamp_duration,
+)
 from eggnoxx.egg import EggWidget
 from eggnoxx.panel import Panel, separator
 
@@ -40,11 +49,13 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(460, 660)
 
         self.timer = Countdown(PRESETS[0].seconds)
+        self._active_preset: Preset | None = PRESETS[0]
         self.egg = EggWidget()
         self.alarmer = Alarmer(self)
 
         self.time_label = self._build_time_label()
         self.status_label = self._build_status_label()
+        self.preset_hint = self._build_preset_hint()
         self.preset_buttons = self._build_presets()
         self.minutes_box, self.seconds_box = self._build_free_input()
         self.start_button = self._build_button("START", self._toggle)
@@ -87,11 +98,28 @@ class MainWindow(QMainWindow):
         label.setFont(theme.pixel(12))
         return label
 
+    def _build_preset_hint(self) -> QLabel:
+        """Describes the selected preset and when the countdown starts.
+
+        The classic German cooking times count from lowering the egg into
+        boiling water. Saying so matters: started from cold water the same
+        numbers are roughly three minutes short.
+        """
+        label = QLabel()
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.setFont(theme.pixel(10))
+        label.setStyleSheet(f"color: {theme.DIM.name()};")
+        label.setWordWrap(True)
+        return label
+
     def _build_presets(self) -> list[QPushButton]:
         buttons = []
         for index, preset in enumerate(PRESETS, start=1):
             button = self._build_button(f"{preset.label.upper()} {preset.display}", None)
-            button.setToolTip(f"Kurzbefehl {index}")
+            button.setToolTip(
+                f"{preset.label}: {preset.note}\n"
+                f"{BOILING_WATER_HINT}\n{COLD_WATER_HINT}\nKurzbefehl {index}"
+            )
             button.clicked.connect(lambda _=False, p=preset: self._select_preset(p))
             buttons.append(button)
         return buttons
@@ -126,6 +154,8 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.status_label)
         layout.addSpacing(10)
         layout.addWidget(self._build_egg_row())
+        layout.addSpacing(4)
+        layout.addWidget(self.preset_hint)
         layout.addStretch(1)
         layout.addSpacing(6)
 
@@ -197,8 +227,8 @@ class MainWindow(QMainWindow):
         grid.setHorizontalSpacing(8)
         grid.setVerticalSpacing(4)
 
-        caption_min = QLabel("MIN")
-        caption_sec = QLabel("SEK")
+        caption_min = QLabel("MINUTEN")
+        caption_sec = QLabel("SEKUNDEN")
         for caption in (caption_min, caption_sec):
             caption.setFont(theme.pixel(10))
             caption.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -271,6 +301,7 @@ class MainWindow(QMainWindow):
         self.seconds_box.setValue(preset.seconds % 60)
         self.minutes_box.blockSignals(False)
         self.seconds_box.blockSignals(False)
+        self._active_preset = preset
         self._refresh()
 
     def _on_free_input(self) -> None:
@@ -283,7 +314,14 @@ class MainWindow(QMainWindow):
             return
         self.alarmer.stop()
         self.timer.set_duration(clamp_duration(self.minutes_box.value(), self.seconds_box.value()))
+        # A hand-typed time is no preset, so drop the preset description.
+        self._active_preset = None
         self._refresh()
+
+    def _hint_text(self) -> str:
+        """Two short lines under the egg: the result and how to count."""
+        result = self._active_preset.note if self._active_preset else "Freie Zeit"
+        return f"{result}\n{BOILING_WATER_HINT}\n{COLD_WATER_HINT}"
 
     def _set_always_on_top(self, enabled: bool) -> None:
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, enabled)
@@ -313,6 +351,7 @@ class MainWindow(QMainWindow):
                 State.DONE: "FERTIG",
             }[self.timer.state]
         )
+        self.preset_hint.setText(self._hint_text())
         busy = self.timer.is_running or self.timer.state is State.PAUSED
         for button in (*self.preset_buttons, self.set_button):
             button.setEnabled(not busy)

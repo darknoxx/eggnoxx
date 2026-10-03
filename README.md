@@ -8,7 +8,7 @@ eine große Uhr aus einer 8×8-Pixelschrift.
 
 ## Features
 
-- **Presets**: Weich 6:30 · Wachtel 7:00 · Hart 9:00
+- **Presets**: Weich 6:30 · Halbweich 7:00 · Hart 9:00
 - **Freier Timer** mit Minuten- und Sekundeneingabe
 - **Pixel-Ei**, das sich beim Kochen von unten füllt
 - **Volumen-gerechter Füllstand** — das Ei wirkt gefüllt, nicht nur hoch
@@ -16,13 +16,29 @@ eine große Uhr aus einer 8×8-Pixelschrift.
 - **Immer-im-Vordergrund** für den Blick über den Herd
 - Läuft auch minimiert weiter, beim Schließen wird nachgefragt
 
+## Kochzeiten
+
+Alle Presets zählen **ab dem Einlegen ins bereits kochende Wasser** — so ist
+es auch in den klassischen Kochzeiten-Tabellen üblich. Das Ei ist ein
+Wärmespeicher und muss erst selbst auf Temperatur kommen.
+
+| Preset | Zeit | Dotter |
+| --- | --- | --- |
+| Weich | 6:30 | noch flüssig |
+| Halbweich | 7:00 | dickflüssig, weich |
+| Hart | 9:00 | vollständig fest |
+
+**Aus Kaltwasser** braucht dasselbe Ergebnis etwa **3 Minuten mehr** (weich also
+rund 9–10 min, hart rund 12–13 min). Die App weist während des Betriebs darauf
+hin.
+
 ## Bedienung
 
 | Taste | Funktion |
 | --- | --- |
 | `Leertaste` | Start / Pause |
 | `R` | Reset |
-| `1` `2` `3` | Preset Weich / Wachtel / Hart |
+| `1` `2` `3` | Preset Weich / Halbweich / Hart |
 | `Alt` + `T` | Immer im Vordergrund umschalten |
 | `Esc` | Beenden |
 
@@ -47,7 +63,7 @@ Alternativ nach `pip install -e .` als `eggnoxx`.
 ```bash
 pip install -e ".[dev]"
 
-pytest              # 33 Logik-Tests, ohne GUI
+pytest              # 37 Logik-Tests, ohne GUI
 ruff check .
 ruff format .
 

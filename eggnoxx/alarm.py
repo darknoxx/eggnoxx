@@ -8,7 +8,7 @@ from PySide6.QtCore import QObject, QTimer
 from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QApplication, QWidget
 
-from eggnoxx.theme import BLACK, BLINK_MS, NEAR_BLACK, NEAR_WHITE, WHITE, stylesheet
+from eggnoxx.theme import BLACK, BLINK_MS, WHITE, stylesheet
 
 
 class Alarmer(QObject):
@@ -62,15 +62,21 @@ class Alarmer(QObject):
         if self._app is not None:
             self._app.setStyleSheet(stylesheet(dark=dark))
 
-        palette = QPalette()
-        if dark:
-            palette.setColor(QPalette.ColorRole.Window, BLACK)
-            palette.setColor(QPalette.ColorRole.WindowText, WHITE)
-            palette.setColor(QPalette.ColorRole.Mid, NEAR_WHITE)
-        else:
-            palette.setColor(QPalette.ColorRole.Window, WHITE)
-            palette.setColor(QPalette.ColorRole.WindowText, BLACK)
-            palette.setColor(QPalette.ColorRole.Mid, NEAR_BLACK)
+        # Start from the resolved palette: roles left unset would fall back to
+        # the light theme and only some widgets would invert.
+        palette = QPalette(self._target.palette())
+        window, text = (BLACK, WHITE) if dark else (WHITE, BLACK)
+        for group in (
+            QPalette.ColorGroup.Active,
+            QPalette.ColorGroup.Inactive,
+            QPalette.ColorGroup.Disabled,
+        ):
+            palette.setColor(group, QPalette.ColorRole.Window, window)
+            palette.setColor(group, QPalette.ColorRole.WindowText, text)
+            palette.setColor(group, QPalette.ColorRole.Base, window)
+            palette.setColor(group, QPalette.ColorRole.Text, text)
+            palette.setColor(group, QPalette.ColorRole.Button, window)
+            palette.setColor(group, QPalette.ColorRole.ButtonText, text)
         self._target.setPalette(palette)
         self._target.style().unpolish(self._target)
         self._target.style().polish(self._target)

@@ -74,7 +74,7 @@ def main() -> int:
     print("start / pause / reset")
     window._toggle()
     check("laeuft nach Start", window.timer.is_running)
-    check("Start-Button zeigt Pause", window.start_button.text() == "Pause")
+    check("Start-Button zeigt PAUSE", window.start_button.text() == "PAUSE")
     pump(600)
     check("Zeit laeuft ab", window.timer.remaining < 2.0)
     check("Ei fuellt sich", 0.0 < window.egg.progress < 1.0)

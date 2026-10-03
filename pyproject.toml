@@ -1,7 +1,7 @@
 [project]
 name = "eggnoxx"
-version = "0.1.0"
-description = "Minimalistische Schwarz-Weiß-Eieruhr"
+version = "0.2.0"
+description = "Minimalistische Schwarz-Weiß-Eieruhr im Retro-Pixel-Look"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["pyside6>=6.5"]
@@ -18,6 +18,9 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["eggnoxx"]
+# The bundled pixel font has to travel with the wheel, otherwise the app falls
+# back to the system monospace font after installation.
+artifacts = ["eggnoxx/assets/fonts/*.ttf"]
 
 [tool.ruff]
 line-length = 100

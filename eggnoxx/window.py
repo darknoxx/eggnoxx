@@ -293,6 +293,11 @@ class MainWindow(QMainWindow):
         self._refresh()
 
     def _select_preset(self, preset) -> None:
+        # Presets are disabled while the clock runs; the 1-3 shortcuts must
+        # respect that too, otherwise a stray keypress silently throws away a
+        # running timer.
+        if self._is_busy():
+            return
         self.tick_timer.stop()
         self.alarmer.stop()
         self.timer.set_duration(preset.seconds)
@@ -305,13 +310,21 @@ class MainWindow(QMainWindow):
         self._active_preset = preset
         self._refresh()
 
+    def _is_busy(self) -> bool:
+        """True while the time must not be changed: running or paused.
+
+        Every path that loads a different duration checks this, so the mouse
+        and the keyboard cannot disagree about what is allowed.
+        """
+        return self.timer.is_running or self.timer.state is State.PAUSED
+
     def _on_free_input(self) -> None:
         """Live-update while typing, but never interrupt a run."""
-        if self.timer.state in (State.IDLE, State.DONE):
+        if not self._is_busy():
             self._apply_free_input()
 
     def _apply_free_input(self) -> None:
-        if self.timer.state in (State.RUNNING, State.PAUSED):
+        if self._is_busy():
             return
         self.alarmer.stop()
         self.timer.set_duration(clamp_duration(self.minutes_box.value(), self.seconds_box.value()))
@@ -353,7 +366,7 @@ class MainWindow(QMainWindow):
             }[self.timer.state]
         )
         self.preset_hint.setText(self._hint_text())
-        busy = self.timer.is_running or self.timer.state is State.PAUSED
+        busy = self._is_busy()
         for button in (*self.preset_buttons, self.set_button):
             button.setEnabled(not busy)
         for box in (self.minutes_box, self.seconds_box):

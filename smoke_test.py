@@ -171,6 +171,27 @@ def main() -> int:
     QTest.keyClick(window, Qt.Key.Key_3)
     pump(50)
     check("Taste 3 laedt Preset Hart", window.timer.total == 540)
+
+    print("sperre waehrend des laufenden timers")
+    window._select_preset(PRESETS[0])
+    window._toggle()
+    pump(50)
+    running = window.timer.is_running
+    check("timer laeuft", running)
+    check("preset-knopf deaktiviert", not window.preset_buttons[2].isEnabled())
+    QTest.keyClick(window, Qt.Key.Key_3)
+    pump(50)
+    check(
+        "taste 3 beendet den timer nicht",
+        window.timer.is_running and window.timer.total == 390,
+    )
+    check("anzeige unveraendert", window.time_label.text() == "6:30")
+    QTest.keyClick(window, Qt.Key.Key_R)
+    pump(50)
+    check("R resettet trotzdem", window.timer.state.name == "IDLE")
+    QTest.keyClick(window, Qt.Key.Key_3)
+    pump(50)
+    check("taste 3 wirkt wieder im idle", window.timer.total == 540)
     QTest.keyClick(window, Qt.Key.Key_Space)
     pump(50)
     check("Leertaste startet", window.timer.is_running)

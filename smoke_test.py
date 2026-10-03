@@ -92,6 +92,10 @@ def main() -> int:
     check("Anzeige 0:00", window.time_label.text() == "0:00")
     check("Alarm-Button sichtbar", window.alarm_button.isVisible())
     check("Signalton aktiv", window.alarmer.is_active)
+    check(
+        "Alarm meldet Ton oder Fallback",
+        isinstance(window.alarmer.has_tone, bool),
+    )
     pump(100)
     check("kein Ueberlauf mit Alarm-Button", not overflowing_widgets(window))
     window.grab().save(str(ARTIFACTS / "alarm.png"))

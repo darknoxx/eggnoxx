@@ -44,11 +44,15 @@ install_project() {
     fi
 }
 
-generate_icons() {
-    # Die Icons liegen im Repo; nur neu erzeugen, wenn sie fehlen.
+generate_assets() {
+    # Icons und Ton liegen im Repo; nur neu erzeugen, wenn sie fehlen.
     if [ ! -f "$PROJECT_DIR/eggnoxx/assets/icons/128x128.png" ]; then
         info "Icons werden erzeugt ..."
         QT_QPA_PLATFORM=offscreen "$VENV_DIR/bin/python" -m eggnoxx.icon >/dev/null
+    fi
+    if [ ! -f "$PROJECT_DIR/eggnoxx/assets/sounds/alarm.wav" ]; then
+        info "Alarmton wird erzeugt ..."
+        "$VENV_DIR/bin/python" "$PROJECT_DIR/tools/make_sound.py" >/dev/null
     fi
 }
 
@@ -107,7 +111,7 @@ main() {
     check_python
     create_venv
     install_project
-    generate_icons
+    generate_assets
     install_desktop
 
     echo

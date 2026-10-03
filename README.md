@@ -12,7 +12,7 @@ eine große Uhr aus einer 8×8-Pixelschrift.
 - **Freier Timer** mit Minuten- und Sekundeneingabe
 - **Pixel-Ei**, das sich beim Kochen von unten füllt
 - **Volumen-gerechter Füllstand** — das Ei wirkt gefüllt, nicht nur hoch
-- **Alarm** aus Signalton und blinkender Schwarz-Weiß-Invertierung des ganzen Fensters
+- **Alarm** aus einem gebündelten Signalton und blinkender Schwarz-Weiß-Invertierung des ganzen Fensters
 - **Immer-im-Vordergrund** für den Blick über den Herd
 - Läuft auch minimiert weiter, beim Schließen wird nachgefragt
 
@@ -85,6 +85,25 @@ python -m eggnoxx.desktop install
 eggnoxx          # oder: python -m eggnoxx
 ```
 
+## Klang
+
+Der Alarm ist ein gebündelter Ton: zwei kurze Töne von je 0,12 s, mit weichen
+Rändern gegen das Klicken. Er liegt als `eggnoxx/assets/sounds/alarm.wav` im
+Paket und wird über `QSoundEffect` abgespielt, also durch den System-Mixer —
+auf Linux wie auf macOS gleich.
+
+Fehlt die Datei oder fehlt das Audio-Backend, fällt der Alarm auf den
+System-Piepton zurück und läuft nie auf einen Fehler. Neu erzeugen lässt sich
+der Ton mit:
+
+```bash
+python tools/make_sound.py
+```
+
+Sollte auf einem System nichts zu hören sein, liegt es am Ausgabegerät: In
+Containern oder auf Dummy-Sinks (PipeWire `auto_null`) akzeptiert Qt kein
+PCM. Auf einem normalen Desktop mit echter Soundkarte läuft es.
+
 ## Icons
 
 Die Icons liegen als Pixelgrafik in den Größen 16 bis 256px plus einer
@@ -99,7 +118,7 @@ python -m eggnoxx.icon
 ```bash
 pip install -e ".[dev]"
 
-pytest              # 53 Logik-Tests, ohne GUI
+pytest              # 69 Logik-Tests, ohne GUI
 ruff check .
 ruff format .
 
@@ -116,6 +135,7 @@ python smoke_test.py --visible # Fenster wirklich anzeigen
 | `eggnoxx/egg.py` | Das Pixel-Ei: Form, Rasterung, Füllstand |
 | `eggnoxx/icon.py` | Erzeugt das App-Icon in allen Größen |
 | `eggnoxx/desktop.py` | Desktop-Eintrag und Icons installieren |
+| `tools/make_sound.py` | Erzeugt `alarm.wav` |
 | `install.sh` | venv, Paket, Icons und Starter-Eintrag in einem Durchgang |
 | `eggnoxx/panel.py` | PunktRaster und Eckwinkel als Hintergrund |
 | `eggnoxx/alarm.py` | Signalton und Blink-Logik |

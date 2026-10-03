@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import QRect
 from PySide6.QtGui import QColor, QImage, QPainter, QPalette
-from PySide6.QtWidgets import QSizePolicy, QWidget
+from PySide6.QtWidgets import QApplication, QSizePolicy, QWidget
 
 SUPERELLIPSE = 2.0  # 2.0 is a true ellipse; higher rounds the ends off
 TAPER = 0.5  # how much narrower the top is than the bottom
@@ -178,9 +178,10 @@ class EggWidget(QWidget):
     ) -> QImage:
         """Rasterise the egg at an explicit size, independent of the widget.
 
-        Used for the app icon, which needs an exact pixel grid rather than
-        whatever the widget geometry happens to be, and wants a slightly
-        rounder proportion than the in-app egg to survive downscaling.
+        Exists so the app icon does not have to reach into a private method:
+        it needs an exact pixel grid rather than whatever the widget geometry
+        happens to be, and a slightly rounder proportion than the in-app egg to
+        survive downscaling.
         """
         return self._rasterise(grid_w, grid_h, shell, fill, empty, inset, fill_fraction, aspect)
 
@@ -210,8 +211,6 @@ class EggWidget(QWidget):
 
 def debug_sheet(path: str, steps: tuple[float, ...] | None = None) -> None:
     """Render a contact sheet of the egg at several fill levels (dev helper)."""
-    from PySide6.QtWidgets import QApplication
-
     from eggnoxx import theme
 
     app = QApplication.instance() or QApplication([])

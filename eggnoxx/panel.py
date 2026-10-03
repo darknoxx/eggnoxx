@@ -7,7 +7,7 @@ as the pixel font and the pixel-art egg.
 from __future__ import annotations
 
 from PySide6.QtCore import QPoint, Qt
-from PySide6.QtGui import QColor, QPainter
+from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QFrame, QWidget
 
 from eggnoxx import theme
@@ -15,7 +15,6 @@ from eggnoxx import theme
 DOT_SPACING = 6  # background dot grid
 TICK_LENGTH = 12  # corner tick arms
 TICK_MARGIN = 8
-LIGHT_GRID = QColor("#e6e6e6")
 
 
 class Panel(QWidget):
@@ -34,7 +33,7 @@ class Panel(QWidget):
         painter.fillRect(self.rect(), background)
 
         # The dot grid follows the blink, so take the shade from the background.
-        painter.setPen(LIGHT_GRID if background.lightness() > 127 else theme.GRID)
+        painter.setPen(theme.LIGHT_GRID if background.lightness() > 127 else theme.GRID)
         for y in range(0, self.height(), DOT_SPACING):
             for x in range(0, self.width(), DOT_SPACING):
                 painter.drawPoint(x, y)
@@ -59,10 +58,6 @@ class Panel(QWidget):
         ):
             painter.drawLine(QPoint(x, y), QPoint(x + dx * TICK_LENGTH, y))
             painter.drawLine(QPoint(x, y), QPoint(x, y + dy * TICK_LENGTH))
-
-    def resizeEvent(self, event) -> None:  # noqa: N802 - Qt naming
-        super().resizeEvent(event)
-        self.update()
 
 
 def separator(parent: QWidget | None = None) -> QFrame:

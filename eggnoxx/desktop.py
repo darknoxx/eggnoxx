@@ -18,7 +18,6 @@ from pathlib import Path
 
 APP_ID = "eggnoxx"
 APP_NAME = "EggNoxx"
-APP_SUMMARY = "Minimalistische Schwarz-Weiß-Eieruhr"
 APP_COMMENT = "Eieruhr im Retro-Pixel-Look: Presets, freier Timer und Alarm."
 
 ICON_SIZES = (16, 22, 24, 32, 48, 64, 128, 256)

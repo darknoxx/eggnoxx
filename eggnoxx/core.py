@@ -8,6 +8,7 @@ accumulating tick intervals, so the countdown never drifts.
 from __future__ import annotations
 
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum, auto
 
@@ -73,7 +74,12 @@ def clamp_duration(minutes: int, secs: int) -> int:
 class Countdown:
     """Monotonic countdown that can be started, paused, reset and queried."""
 
-    def __init__(self, seconds: int, clock: callable = time.monotonic) -> None:
+    def __init__(
+        self,
+        seconds: int,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
+        """``clock`` is injectable so tests can drive time without waiting."""
         self._clock = clock
         self._total = max(1, int(seconds))
         self._remaining = float(self._total)

@@ -14,20 +14,18 @@ FONT_DIR = Path(__file__).parent / "assets" / "fonts"
 PIXEL_FONT_FILES = ("Silkscreen-Regular.ttf", "Silkscreen-Bold.ttf")
 PIXEL_FAMILY = "Silkscreen"
 
-TICK_MS = 100
 BLINK_MS = 500
 
-# Core monochrome palette
+# Core monochrome palette. Everything else derives from these two, so the blink
+# can swap them and the whole window follows.
 BLACK = QColor("#000000")
 WHITE = QColor("#ffffff")
 
-# Retro CRT shades
-OFF_WHITE = QColor("#f2f2f2")
-SHELL = QColor("#ffffff")
-FILL = QColor("#c8c8c8")  # cooked interior
+# Supporting shades
 DIM = QColor("#6b6b6b")  # captions, hints
 GRID = QColor("#141414")  # background dot grid
-HAIRLINE = QColor("#2e2e2e")
+HAIRLINE = QColor("#2e2e2e")  # separators, button borders
+LIGHT_GRID = QColor("#e6e6e6")  # dot grid on the inverted background
 
 _font_loaded = False
 

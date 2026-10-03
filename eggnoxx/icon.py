@@ -13,7 +13,7 @@ from pathlib import Path
 from PySide6.QtCore import QRect, Qt
 from PySide6.QtGui import QColor, QImage, QPainter
 
-from eggnoxx.egg import EggWidget, fill_height
+from eggnoxx.egg import EggWidget, egg_profile, fill_height
 
 # Sizes a Linux desktop may ask for; keeping the set complete avoids blurry
 # scaling in the dock, the launcher and the window list.
@@ -116,8 +116,6 @@ def _svg() -> str:
     rather than a filled outline: the stroke keeps the shape identical at every
     size without needing an even-odd trick for the hole.
     """
-    from eggnoxx.egg import egg_profile
-
     left, right = 3.5, 12.5
     bottom, top = 13.5, 2.5
     half_span = (right - left) / 2

@@ -33,6 +33,7 @@ from eggnoxx.core import (
     State,
     clamp_duration,
 )
+from eggnoxx.desktop import APP_ID
 from eggnoxx.egg import EggWidget
 from eggnoxx.panel import Panel, separator
 
@@ -381,6 +382,9 @@ def main() -> int:
     app = QApplication(sys.argv)
     app.setApplicationName("EggNoxx")
     app.setApplicationDisplayName("EggNoxx")
+    # Tells the desktop which entry owns the window, so the dock groups it
+    # under the installed icon instead of showing a generic python one.
+    app.setDesktopFileName(f"{APP_ID}.desktop")
     theme.load_fonts()
     app.setStyleSheet(theme.stylesheet())
 

@@ -103,20 +103,39 @@ class EggWidget(QWidget):
         cell = self._cell_size()
         return max(8, self.width() // cell), max(10, self.height() // cell)
 
-    def _egg_box(self, grid_w: int, grid_h: int) -> tuple[float, float, float, float]:
+    def _egg_box(
+        self,
+        grid_w: int,
+        grid_h: int,
+        fill_fraction: float = FILL_FRACTION,
+        aspect: float = EGG_ASPECT,
+    ) -> tuple[float, float, float, float]:
         """Egg bounding box in cell units: (left, top, width, height)."""
-        box_w = min(grid_w * FILL_FRACTION, (grid_h * 0.94) / EGG_ASPECT)
-        box_h = box_w * EGG_ASPECT
+        box_w = min(grid_w * fill_fraction, (grid_h * 0.94) / aspect)
+        box_h = box_w * aspect
         return (grid_w - box_w) / 2, (grid_h - box_h) / 2, box_w, box_h
 
-    def _rasterise(self, grid_w: int, grid_h: int, shell, fill, empty) -> QImage:
-        """One pixel per cell: 1px shell, filled interior from the bottom."""
-        image = QImage(grid_w, grid_h, QImage.Format_RGB32)
+    def _rasterise(
+        self,
+        grid_w: int,
+        grid_h: int,
+        shell,
+        fill,
+        empty,
+        inset: float = 1.2,
+        fill_fraction: float = FILL_FRACTION,
+        aspect: float = EGG_ASPECT,
+    ) -> QImage:
+        """One pixel per cell: 1px shell, filled interior from the bottom.
+
+        ``inset`` is the shell thickness in cells; it has to stay below 1 for
+        small grids such as an icon, or the interior disappears entirely.
+        """
+        image = QImage(grid_w, grid_h, QImage.Format_ARGB32)
         image.fill(empty)
 
-        left, top, box_w, box_h = self._egg_box(grid_w, grid_h)
+        left, top, box_w, box_h = self._egg_box(grid_w, grid_h, fill_fraction, aspect)
         half_w = box_w / 2
-        inset = 1.2  # shell thickness in cells
         level = fill_height(self._progress)
 
         for row in range(grid_h):
@@ -145,6 +164,25 @@ class EggWidget(QWidget):
                 else:
                     image.setPixelColor(col, row, empty)
         return image
+
+    def sprite(
+        self,
+        grid_w: int,
+        grid_h: int,
+        shell,
+        fill,
+        empty,
+        inset: float = 1.2,
+        fill_fraction: float = FILL_FRACTION,
+        aspect: float = EGG_ASPECT,
+    ) -> QImage:
+        """Rasterise the egg at an explicit size, independent of the widget.
+
+        Used for the app icon, which needs an exact pixel grid rather than
+        whatever the widget geometry happens to be, and wants a slightly
+        rounder proportion than the in-app egg to survive downscaling.
+        """
+        return self._rasterise(grid_w, grid_h, shell, fill, empty, inset, fill_fraction, aspect)
 
     # -- painting -------------------------------------------------------
     def paintEvent(self, event) -> None:  # noqa: N802 - Qt naming

@@ -32,9 +32,25 @@ HAIRLINE = QColor("#2e2e2e")
 _font_loaded = False
 
 
+def _running_app():
+    """The live QGuiApplication, or None. Querying this is crash-safe."""
+    from PySide6.QtGui import QGuiApplication
+
+    return QGuiApplication.instance()
+
+
 def load_fonts() -> str:
-    """Register the bundled pixel font; return the usable family name."""
+    """Register the bundled pixel font; return the usable family name.
+
+    Returns an empty string when there is no usable font, which makes the
+    callers fall back to the system font. Calling this without a running
+    ``QGuiApplication`` is safe but pointless: Qt needs one to know about font
+    databases, and touching ``QFontDatabase`` before that crashes.
+    """
     global _font_loaded
+    if _running_app() is None:
+        return ""
+
     if not _font_loaded:
         _font_loaded = True
         for name in PIXEL_FONT_FILES:

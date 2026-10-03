@@ -20,7 +20,7 @@ build-backend = "hatchling.build"
 packages = ["eggnoxx"]
 # The bundled pixel font has to travel with the wheel, otherwise the app falls
 # back to the system monospace font after installation.
-artifacts = ["eggnoxx/assets/fonts/*.ttf"]
+artifacts = ["eggnoxx/assets/fonts/*.ttf", "eggnoxx/assets/icons/*"]
 
 [tool.ruff]
 line-length = 100

@@ -45,25 +45,61 @@ hin.
 ## Installation
 
 ```bash
+./install.sh
+```
+
+Das Skript legt das venv an, installiert PySide6 und das Paket, erzeugt bei
+Bedarf die Icons und registriert den Desktop-Eintrag. Läuft ohne `sudo` und
+fasst nichts außerhalb von `~/.local/share` an. Danach steht EggNoxx im
+Anwendungsmenü und lässt sich an die Taskleiste pinnen.
+
+Mit Entwicklungswerkzeugen (pytest, ruff):
+
+```bash
+WITH_DEV=1 ./install.sh
+```
+
+Wieder entfernen:
+
+```bash
+./install.sh --uninstall
+```
+
+<details>
+<summary>Manuell statt per Skript</summary>
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install pyside6
+pip install -e .
+python -m eggnoxx.desktop install
 ```
+
+`eggnoxx.desktop` kennt auch `status` (nur prüfen) und `uninstall`.
+
+</details>
 
 ## Starten
 
 ```bash
-python -m eggnoxx
+eggnoxx          # oder: python -m eggnoxx
 ```
 
-Alternativ nach `pip install -e .` als `eggnoxx`.
+## Icons
+
+Die Icons liegen als Pixelgrafik in den Größen 16 bis 256px plus einer
+SVG-Version in `eggnoxx/assets/icons/`. Neu erzeugen:
+
+```bash
+python -m eggnoxx.icon
+```
 
 ## Entwicklung
 
 ```bash
 pip install -e ".[dev]"
 
-pytest              # 37 Logik-Tests, ohne GUI
+pytest              # 53 Logik-Tests, ohne GUI
 ruff check .
 ruff format .
 
@@ -78,6 +114,9 @@ python smoke_test.py --visible # Fenster wirklich anzeigen
 | `eggnoxx/core.py` | Timer-Logik ohne Qt — driftfrei über `time.monotonic()` |
 | `eggnoxx/theme.py` | Farben und die eingebettete Pixelschrift |
 | `eggnoxx/egg.py` | Das Pixel-Ei: Form, Rasterung, Füllstand |
+| `eggnoxx/icon.py` | Erzeugt das App-Icon in allen Größen |
+| `eggnoxx/desktop.py` | Desktop-Eintrag und Icons installieren |
+| `install.sh` | venv, Paket, Icons und Starter-Eintrag in einem Durchgang |
 | `eggnoxx/panel.py` | PunktRaster und Eckwinkel als Hintergrund |
 | `eggnoxx/alarm.py` | Signalton und Blink-Logik |
 | `eggnoxx/window.py` | Hauptfenster, Presets, Tastaturkürzel |

@@ -208,7 +208,9 @@ class MainWindow(QMainWindow):
         grid.addWidget(self.minutes_box, 1, 0)
         grid.addWidget(caption_sec, 0, 1)
         grid.addWidget(self.seconds_box, 1, 1)
-        grid.addWidget(self.set_button, 0, 2, 2, 1)
+        # Row 1 only: spanning both rows made the button taller than the
+        # spinners, and Qt centres it in the spanned area, so it sat higher.
+        grid.addWidget(self.set_button, 1, 2)
         grid.setColumnStretch(0, 1)
         grid.setColumnStretch(1, 1)
         grid.setColumnStretch(2, 1)

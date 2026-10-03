@@ -115,6 +115,26 @@ def main() -> int:
     window._apply_free_input()
     check("freie Zeit 3:15", window.timer.display == "3:15")
 
+    print("ausrichtung")
+    tops = {
+        name: widget.geometry().top()
+        for name, widget in (
+            ("MIN", window.minutes_box),
+            ("SEK", window.seconds_box),
+            ("SETZEN", window.set_button),
+        )
+    }
+    check("Min/Sek/Setzen auf gleicher Hoehe", len(set(tops.values())) == 1)
+    heights = {
+        name: widget.geometry().height()
+        for name, widget in (
+            ("MIN", window.minutes_box),
+            ("SEK", window.seconds_box),
+            ("SETZEN", window.set_button),
+        )
+    }
+    check("Min/Sek/Setzen gleich hoch", len(set(heights.values())) == 1)
+
     print("immer oben")
     box = window.findChild(QCheckBox)
     box.setChecked(True)

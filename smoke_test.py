@@ -37,6 +37,17 @@ def check(label: str, condition: bool) -> None:
         failures.append(label)
 
 
+def shrink_to_minimum(window: MainWindow) -> None:
+    """Shrink the window to the tightest size the app actually allows.
+
+    Sizing from ``minimumSize()`` instead of a literal: the layout checks below
+    are only meaningful at the smallest legal geometry, and a hardcoded value
+    silently drifts below the minimum, where Qt clamps it and the check stops
+    testing what it claims to.
+    """
+    window.resize(window.minimumSize())
+
+
 def pump(ms: int) -> None:
     """Spin the event loop for ``ms`` milliseconds."""
     loop = QEventLoop()
@@ -64,11 +75,12 @@ def main() -> int:
     app.setStyleSheet(theme.stylesheet())
     window = MainWindow()
     window.timer.set_duration(2)
-    window.resize(430, 620)
+    shrink_to_minimum(window)
     window.show()
 
     print("layout")
     pump(200)
+    check("Fenster sitzt auf dem Minimum", window.size() == window.minimumSize())
     check("kein Ueberlauf im Ausgangszustand", not overflowing_widgets(window))
 
     print("start / pause / reset")
@@ -207,7 +219,7 @@ def main() -> int:
     check("Taste R resettet", window.timer.state.name == "IDLE")
 
     window._select_preset(PRESETS[0])
-    window.resize(430, 620)
+    shrink_to_minimum(window)
     pump(300)
     window.grab().save(str(ARTIFACTS / "idle.png"))
 

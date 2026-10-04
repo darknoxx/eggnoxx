@@ -6,7 +6,7 @@ eine große Uhr aus einer 8×8-Pixelschrift.
 
 ![EggNoxx im Bereitschaftszustand](docs/screenshot-idle.png)
 
-**Linux und macOS** (Apple Silicon und Intel) · Python 3.10+ · PySide6
+**Linux und macOS** (Apple Silicon und Intel) · Python 3.10–3.14 · PySide6
 
 ## Features
 
@@ -62,8 +62,9 @@ Drei Schritte, nichts wird am System verändert.
 python3 --version
 ```
 
-Kommt eine Zahl ab `3.10`, passt das. Kommt `command not found`, fehlt Python —
-dann einmalig `brew install python` eingeben.
+Kommt eine Zahl zwischen `3.10` und `3.14`, passt das. Kommt `command not
+found`, fehlt Python — dann einmalig `brew install python` eingeben. Ab 3.15
+gibt es noch kein PySide6, das trägt EggNoxx also nicht.
 
 **2. Code holen.** [ZIP herunterladen](https://github.com/darknoxx/eggnoxx/archive/refs/heads/main.zip)
 und im Finder **doppelklicken**. Es entsteht ein Ordner `eggnoxx-main`.
@@ -232,8 +233,13 @@ die System-Monospace-Schrift zurück.
 
 ## Anforderungen
 
-Python 3.10 oder neuer und PySide6. Getestet mit Python 3.14 und PySide6 6.11
+Python 3.10 bis 3.14 und PySide6. Getestet mit Python 3.14 und PySide6 6.11
 unter Linux sowie auf einem MacBook mit M-Chip. PySide6 liefert für macOS ein
 `universal2`-Wheel, Intel und Apple Silicon laufen also beide.
+
+Die Obergrenze bei 3.15 stammt nicht aus dem Projekt, sondern von PySide6 6.11,
+das selbst `>=3.10,<3.15` verlangt. `pyproject.toml` gibt sie ebenfalls an,
+damit die Installation auf einem 3.15 sofort mit dieser Begründung abbricht und
+nicht erst irgendwo im Resolver von PySide6.
 
 Auf macOS bringt Apple kein `python3` mehr mit — siehe [Installation](#installation).

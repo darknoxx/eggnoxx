@@ -46,6 +46,22 @@ def launch_command() -> list[str]:
     return [str(interpreter), "-m", APP_ID]
 
 
+def quote_exec(part: str) -> str:
+    """Quote one ``Exec`` argument as the desktop entry specification demands.
+
+    ``Exec`` is not a shell line, but the specification still reserves a set of
+    characters - space among them - that must be escaped, otherwise the desktop
+    splits the argument at the wrong place. A checkout under
+    ``/home/who/My Project/`` produced an entry that silently did nothing.
+
+    Inside double quotes, a literal ``"``, ``\\``, ``$`` or backtick is escaped by
+    a backslash. Backslash first, otherwise it would escape the backslashes that
+    the following replacements just inserted.
+    """
+    escaped = part.replace("\\", "\\\\").replace('"', '\\"').replace("`", "\\`").replace("$", "\\$")
+    return f'"{escaped}"'
+
+
 def desktop_contents() -> str:
     """The desktop entry text.
 
@@ -53,7 +69,7 @@ def desktop_contents() -> str:
     which is wrong for an installed copy. Exec carries an absolute console
     script or interpreter path, so the entry works from any directory.
     """
-    exec_line = " ".join(launch_command())
+    exec_line = " ".join(quote_exec(part) for part in launch_command())
     return f"""[Desktop Entry]
 Type=Application
 Version=1.5

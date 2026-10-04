@@ -1,9 +1,12 @@
 [project]
 name = "eggnoxx"
-version = "0.2.0"
+dynamic = ["version"]
 description = "Minimalistische Schwarz-Weiß-Eieruhr im Retro-Pixel-Look"
 readme = "README.md"
-requires-python = ">=3.10"
+# Upper bound is not ours: PySide6 6.11 declares ">=3.10,<3.15". Declaring it
+# here too means a 3.15 install fails immediately naming this project instead
+# of dying somewhere inside the PySide6 resolver.
+requires-python = ">=3.10,<3.15"
 dependencies = ["pyside6>=6.5"]
 
 [project.optional-dependencies]
@@ -15,6 +18,12 @@ eggnoxx = "eggnoxx.__main__:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+# Single source of truth: __init__.py. The other direction would make
+# __version__ depend on the package being installed, so it would stop working in
+# a plain source checkout.
+[tool.hatch.version]
+path = "eggnoxx/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["eggnoxx"]

@@ -53,31 +53,46 @@ Installation.
 
 ### macOS
 
-ZIP von GitHub herunterladen, entpacken, im Ordner starten:
+Drei Schritte, nichts wird am System verändert.
 
-1. [Code herunterladen](https://github.com/darknoxx/eggnoxx/archive/refs/heads/main.zip)
-2. Entpacken (Doppelklick im Finder) und den Ordner `eggnoxx-main` öffnen
-3. Im Terminal dort:
+**1. Terminal öffnen.** Drücke `Cmd` + `Leertaste`, tippe `Terminal`, drücke
+`Enter`. Dann prüfen, ob Python da ist:
 
 ```bash
-cd ~/Downloads/eggnoxx-main
+python3 --version
+```
 
+Kommt eine Zahl ab `3.10`, passt das. Kommt `command not found`, fehlt Python —
+dann einmalig `brew install python` eingeben.
+
+**2. Code holen.** [ZIP herunterladen](https://github.com/darknoxx/eggnoxx/archive/refs/heads/main.zip)
+und im Finder **doppelklicken**. Es entsteht ein Ordner `eggnoxx-main`.
+
+**3. Starten.** Ziehe den Ordner `eggnoxx-main` aus dem Finder auf das offene
+Terminal-Fenster — der Pfad landet als Text im Terminal. `Enter` drücken, dann
+diese drei Zeilen einfügen:
+
+```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e .
-
 .venv/bin/python -m eggnoxx
 ```
 
-Die drei Befehle einzeln, ohne die Zeile mit `cd` — so lässt sich der Ablauf
-auch aus dem Terminal heraus abtippen. Das venv muss nicht aktiviert werden;
-`.venv/bin/python` zeigt direkt hinein.
+Der dritte Befehl öffnet das Fenster. Beenden mit `Cmd` + `Q`. Ab dem nächsten
+Mal genügt der letzte Befehl, um neu zu starten.
 
-Voraussetzung ist ein Python 3.10 oder neuer — Apple liefert keines mehr mit,
-am einfachsten via Homebrew:
+<details>
+<summary>Wenn etwas nicht klappt</summary>
 
-```bash
-brew install python
-```
+| Was du siehst | Ursache und Lösung |
+| --- | --- |
+| `command not found: python3` | Python fehlt. Schritt 1, `brew install python`. Gibt es kein Homebrew: [python.org](https://www.python.org/downloads/macos/) laden, Installer durchklicken. |
+| `does not appear to be a Python project` | Du bist im falschen Ordner. Im Terminal `ls` tippen: die Ausgabe muss `pyproject.toml` enthalten. Sonst mit `cd` noch einmal in `eggnoxx-main` wechseln. |
+| `No module named eggnoxx` | Der zweite Befehl wurde nicht ausgeführt oder in einem anderen Ordner. Beide Befehle müssen im selben Ordner laufen. |
+| `externally managed environment` | Python ohne das venv benutzt. Statt `pip install` immer `.venv/bin/python -m pip` verwenden. |
+| Fenster geht auf, aber ohne Ton | In **Systemeinstellungen → Ton** prüfen, ob der Ausgabe ein Ton zugeordnet ist. |
+
+</details>
 
 `./install.sh` gibt es nur unter Linux. Auf dem Mac startet EggNoxx aus dem
 Terminal; ein Doppelklick-Symbol im Finder wäre ein `.app`-Bundle, das es
